@@ -3,6 +3,7 @@ require_relative '../../node_modules/@capacitor/ios/scripts/pods_helpers'
 platform :ios, '13.0'
 use_frameworks!
 
+
 # workaround to avoid Xcode caching of Pods that requires
 # Product -> Clean Build Folder after new Cordova plugins installed
 # Requires CocoaPods 1.6 or newer
@@ -21,8 +22,18 @@ end
 target 'App' do
   capacitor_pods
   # Add your Pods here
+  # Add the Firebase pods that you want to use in your project
+  pod 'Firebase/Core', '8.0.0'
+  pod 'Firebase/Auth', '8.0.0'
+  pod 'Firebase/Analytics', '8.0.0'
 end
 
 post_install do |installer|
   assertDeploymentTarget(installer)
+  installer.pods_project.targets.each do |target|
+    target.build_configurations.each do |config|
+      config.build_settings['SWIFT_VERSION'] = '5.0'
+      config.build_settings['OTHER_SWIFT_FLAGS'] = '-D SWIFT_PACKAGE'
+    end
+  end
 end
